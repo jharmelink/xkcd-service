@@ -30,15 +30,15 @@ const root = {
 
 const app = express();
 app.use(cors({
-    origin: ['http://localhost:3000']
+    origin: ['http://localhost:3000', 'xkcd.harmelink.net']
 }))
-app.use('/graphql', graphqlHTTP({
+app.use('/api/graphql', graphqlHTTP({
     schema: schema,
     rootValue: root,
     graphiql: true,
 
 }));
-app.get('/images/:filename', (request: Request, response: Response) => imageService.getImage(request.params.filename, response));
+app.get('/api/images/:filename', (request: Request, response: Response) => imageService.getImage(request.params.filename, response));
 app.listen(4000);
 
 // Set up default mongoose connection
@@ -46,4 +46,4 @@ mongoose.connect('mongodb://localhost:27017/xkcd', {useNewUrlParser: true, useUn
 // Bind connection to error event (to get notification of connection errors)
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-console.debug('Running a GraphQL API server at http://localhost:4000/graphql');
+console.debug('Running a GraphQL API server at http://localhost:4000/api/graphql');
