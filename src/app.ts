@@ -4,6 +4,7 @@ import express, {Request, Response} from 'express';
 import mongoose from "mongoose";
 import {graphqlHTTP} from 'express-graphql';
 import {buildSchema} from 'graphql';
+import xkcdClient from './clients/xkcd-client'
 import xkcdService from "./services/xkcd-service";
 import imageService from "./services/image-service";
 
@@ -50,3 +51,5 @@ mongoose.connect(`mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/xkcd`,
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 console.debug('Running a GraphQL API server at http://localhost:4000/api/graphql');
+
+xkcdClient.initMaxNumber();

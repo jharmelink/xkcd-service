@@ -1,9 +1,22 @@
 import {Xkcd} from "../models/xkcd";
 import {StringMapper} from "./string-mapper";
 
-export class XkcdMapper {
+class XkcdMapper {
 
-    public static mapBody(body: JSON): Xkcd {
+    private static instance: XkcdMapper;
+
+    /**
+     * Lazy initialisation of singleton instance.
+     */
+    static getInstance(): XkcdMapper {
+        if (!XkcdMapper.instance) {
+            XkcdMapper.instance = new XkcdMapper();
+        }
+
+        return XkcdMapper.instance;
+    }
+
+    public mapBody(body: JSON): Xkcd {
         return {
             number: body['num'],
             url: body['img'],
@@ -16,3 +29,5 @@ export class XkcdMapper {
         }
     }
 }
+
+export default XkcdMapper.getInstance();

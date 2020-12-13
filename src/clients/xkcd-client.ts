@@ -1,6 +1,6 @@
 import axios from 'axios';
+import xkcdMapper from "../mappers/xkcd-mapper";
 import {Xkcd} from '../models/xkcd';
-import {XkcdMapper} from "../mappers/xkcd-mapper";
 import {ImageMapper} from "../mappers/image-mapper";
 import {Image} from "../models/image";
 import {StringMapper} from "../mappers/string-mapper";
@@ -15,13 +15,6 @@ class XkcdClient {
     private maxNumber: number;
 
     /**
-     *  Private constructor to prevent initialisation of a new instance.
-     */
-    private constructor() {
-        this.initMaxNumber();
-    }
-
-    /**
      * Lazy initialisation of singleton instance.
      */
     static getInstance(): XkcdClient {
@@ -33,16 +26,24 @@ class XkcdClient {
     }
 
     async getRandomXkcd(): Promise<Xkcd> {
+        if (!this.maxNumber) {
+            throw new Error('Please initialize max number first');
+        }
+
         const randomNumber = Math.floor((Math.random() * this.maxNumber) + 1);
 
         return this.getXkcdByNumber(randomNumber);
     }
 
     async getXkcdByNumber(number: number): Promise<Xkcd> {
+        if (number > this.maxNumber) {
+            number = this.maxNumber;
+        }
+
         const url = 'http://xkcd.com/' + number + '/info.0.json';
 
         return axios.get(url)
-            .then((response) => XkcdMapper.mapBody(response.data))
+            .then((response) => xkcdMapper.mapBody(response.data))
             .catch((error) => {
                 throw new Error('Unable to get xkcd: ' + error)
             });
@@ -58,7 +59,7 @@ class XkcdClient {
             });
     }
 
-    private initMaxNumber(): void {
+    initMaxNumber(): void {
         axios.get('http://xkcd.com/info.0.json')
             .then((response) => StringMapper.getNumber(response.data['num']))
             .then(maxNumber => this.maxNumber = maxNumber)
