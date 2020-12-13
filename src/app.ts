@@ -39,8 +39,7 @@ app.use(cors({
 app.use('/api/graphql', graphqlHTTP({
     schema: schema,
     rootValue: root,
-    graphiql: true,
-
+    graphiql: process.env.GRAPHIQL === 'true',
 }));
 app.get('/api/images/:filename', (request: Request, response: Response) => imageService.getImage(request.params.filename, response));
 app.listen(4000);
